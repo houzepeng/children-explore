@@ -63,30 +63,39 @@ function App() {
     },
     { 
       id: 3, 
-      title: '小学堂中文', 
+      title: '洪恩识字', 
       category: 'chinese', 
-      url: 'https://www.xiaoxue.com', 
-      description: '专业的中文学习平台，包含拼音、汉字、阅读等全方位内容',
+      url: 'https://www.hongen.com/products/literacy', 
+      description: '专业的中文识字平台，通过趣味动画和互动游戏学习汉字',
       lang: 'zh',
-      image: 'https://cdn-icons-png.flaticon.com/512/3976/3976625.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/3976/3976625.png',
+      ageRange: '3-8',
+      difficulty: '初级',
+      isFavorite: false
     },
     { 
       id: 4, 
       title: 'BBC Learning English Kids', 
       category: 'english', 
-      url: 'https://www.bbc.co.uk/learningenglish/english/course/children', 
-      description: 'BBC儿童英语学习平台，提供丰富的互动学习资源',
+      url: 'https://learnenglishkids.britishcouncil.org', 
+      description: 'British Council儿童英语学习平台，提供丰富的互动学习资源',
       lang: 'zh',
-      image: 'https://cdn-icons-png.flaticon.com/512/3898/3898082.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/3898/3898082.png',
+      ageRange: '5-12',
+      difficulty: '初级到中级',
+      isFavorite: false
     },
     { 
       id: 5, 
       title: 'Duolingo Kids', 
       category: 'english', 
-      url: 'https://schools.duolingo.com', 
+      url: 'https://www.duolingo.com', 
       description: 'Fun and effective way to learn English through games and stories',
       lang: 'en',
-      image: 'https://cdn-icons-png.flaticon.com/512/2373/2373201.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2373/2373201.png',
+      ageRange: '4-12',
+      difficulty: '初级',
+      isFavorite: false
     },
     { 
       id: 6, 
@@ -95,7 +104,10 @@ function App() {
       url: 'https://kids.nationalgeographic.com/science', 
       description: '国家地理儿童科学频道，探索神奇的科学世界',
       lang: 'zh',
-      image: 'https://cdn-icons-png.flaticon.com/512/1046/1046269.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/1046/1046269.png',
+      ageRange: '6-12',
+      difficulty: '初级到中级',
+      isFavorite: false
     },
     { 
       id: 7, 
@@ -104,16 +116,22 @@ function App() {
       url: 'https://www.nasa.gov/kidsclub/index.html', 
       description: 'Explore space science with NASA\'s interactive games and activities',
       lang: 'en',
-      image: 'https://cdn-icons-png.flaticon.com/512/2909/2909458.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2909/2909458.png',
+      ageRange: '8-13',
+      difficulty: '中级',
+      isFavorite: false
     },
     { 
       id: 8, 
-      title: '美术宝', 
+      title: '小小艺术家', 
       category: 'art', 
-      url: 'https://www.meishubaoxue.com', 
-      description: '专业的少儿美术教育平台，提供绘画课程和创意手工',
+      url: 'https://www.hellokids.com/c_15933/drawing-for-kids', 
+      description: '儿童绘画学习平台，提供丰富的绘画教程和创意课程',
       lang: 'zh',
-      image: 'https://cdn-icons-png.flaticon.com/512/2970/2970785.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2970/2970785.png',
+      ageRange: '4-12',
+      difficulty: '初级到中级',
+      isFavorite: false
     },
     { 
       id: 9, 
@@ -122,16 +140,22 @@ function App() {
       url: 'https://www.artforkidshub.com', 
       description: 'Easy to follow drawing tutorials for kids of all ages',
       lang: 'en',
-      image: 'https://cdn-icons-png.flaticon.com/512/1048/1048950.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/1048/1048950.png',
+      ageRange: '5-15',
+      difficulty: '初级到高级',
+      isFavorite: false
     },
     { 
       id: 10, 
-      title: '小花生', 
+      title: 'ABCmouse', 
       category: 'games', 
-      url: 'https://www.xiaohuasheng.cn', 
-      description: '寓教于乐的儿童益智游戏平台',
+      url: 'https://www.abcmouse.com', 
+      description: '综合性儿童早教平台，包含游戏、动画、音乐等多种学习内容',
       lang: 'zh',
-      image: 'https://cdn-icons-png.flaticon.com/512/2317/2317963.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2317/2317963.png',
+      ageRange: '2-8',
+      difficulty: '初级',
+      isFavorite: false
     },
     { 
       id: 11, 
@@ -143,6 +167,114 @@ function App() {
       image: 'https://cdn-icons-png.flaticon.com/512/3612/3612569.png',
       ageRange: '3-8',
       difficulty: '初级',
+      isFavorite: false
+    },
+    {
+      id: 12,
+      title: 'Scratch编程',
+      category: 'science',
+      url: 'https://scratch.mit.edu',
+      description: 'MIT开发的儿童编程平台，通过图形化编程培养逻辑思维',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/919/919846.png',
+      ageRange: '8-16',
+      difficulty: '初级到高级',
+      isFavorite: false
+    },
+    {
+      id: 13,
+      title: 'Reading A-Z',
+      category: 'english',
+      url: 'https://www.readinga-z.com',
+      description: 'Comprehensive reading program with leveled books and resources',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/3389/3389081.png',
+      ageRange: '4-12',
+      difficulty: '初级到高级',
+      isFavorite: false
+    },
+    {
+      id: 14,
+      title: '洪恩数学',
+      category: 'math',
+      url: 'https://www.hongen.com/products/math',
+      description: '趣味数学启蒙教育平台，通过游戏和动画学习数学概念',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/3974/3974475.png',
+      ageRange: '3-8',
+      difficulty: '初级',
+      isFavorite: false
+    },
+    {
+      id: 15,
+      title: 'Code.org',
+      category: 'science',
+      url: 'https://code.org',
+      description: 'Learn computer science through fun coding activities and games',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/2721/2721620.png',
+      ageRange: '4-18',
+      difficulty: '初级到高级',
+      isFavorite: false
+    },
+    {
+      id: 16,
+      title: '小学语文',
+      category: 'chinese',
+      url: 'http://www.xiaoxue.com',
+      description: '专业的小学语文学习平台，包含课文、阅读、写作等全面内容',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/3976/3976625.png',
+      ageRange: '6-12',
+      difficulty: '初级到中级',
+      isFavorite: false
+    },
+    {
+      id: 17,
+      title: 'Starfall',
+      category: 'english',
+      url: 'https://www.starfall.com',
+      description: 'Learn to read with phonics, language arts, and mathematics',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/2436/2436683.png',
+      ageRange: '4-8',
+      difficulty: '初级',
+      isFavorite: false
+    },
+    {
+      id: 18,
+      title: '趣味科学实验',
+      category: 'science',
+      url: 'https://www.dkfindout.com/science',
+      description: 'DK出版社的趣味科学实验和知识平台，生动有趣',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/1046/1046269.png',
+      ageRange: '6-14',
+      difficulty: '初级到中级',
+      isFavorite: false
+    },
+    {
+      id: 19,
+      title: 'Typing.com',
+      category: 'games',
+      url: 'https://www.typing.com',
+      description: 'Free online typing tutor and keyboarding lessons for kids',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/2721/2721620.png',
+      ageRange: '7-15',
+      difficulty: '初级到高级',
+      isFavorite: false
+    },
+    {
+      id: 20,
+      title: '美术星球',
+      category: 'art',
+      url: 'https://www.meishuxingqiu.com',
+      description: '少儿美术创意平台，激发艺术潜能',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/2970/2970785.png',
+      ageRange: '4-15',
+      difficulty: '初级到高级',
       isFavorite: false
     }
   ]
