@@ -10,7 +10,12 @@ const GoogleAd = ({ adSlot, style }) => {
     try {
       const pushAd = () => {
         try {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
+          // 确保在顶级域名下运行
+          if (!window.location.hostname.includes('.github.io')) {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          } else {
+            console.warn('AdSense requires top-level domain to function properly');
+          }
         } catch (innerErr) {
           console.error('Error pushing ad:', innerErr);
         }
@@ -19,7 +24,6 @@ const GoogleAd = ({ adSlot, style }) => {
       if (window.adsbygoogle) {
         pushAd();
       } else {
-        // 如果广告脚本还未加载，等待加载完成
         const script = document.createElement('script');
         script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2149434191592924';
         script.async = true;
