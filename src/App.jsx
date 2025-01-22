@@ -1,5 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from 'react-share'
+import { FaFacebook, FaTwitter, FaWhatsapp, FaMoon, FaSun } from 'react-icons/fa'
+
+const isInAgeRange = (resourceRange, selectedRange) => {
+  if (selectedRange === 'all') return true
+  
+  const [resourceStart, resourceEnd] = resourceRange.split('-').map(Number)
+  const [selectedStart, selectedEnd] = selectedRange.split('-').map(Number)
+  
+  return resourceStart >= selectedStart && resourceEnd <= selectedEnd
+}
 
 function App() {
   const [activeCategory, setActiveCategory] = useState('all')
@@ -7,6 +19,32 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedResource, setSelectedResource] = useState(null)
   const [favorites, setFavorites] = useState([])
+  const [darkMode, setDarkMode] = useState(false)
+  const [activeDifficulty, setActiveDifficulty] = useState('all')
+  const [activeAgeRange, setActiveAgeRange] = useState('all')
+  const [trendingResources, setTrendingResources] = useState([])
+
+  useEffect(() => {
+    // 根据收藏数计算热门资源
+    const trending = resources
+      .map(resource => ({
+        ...resource,
+        popularity: favorites.includes(resource.id) ? 1 : 0
+      }))
+      .sort((a, b) => b.popularity - a.popularity)
+      .slice(0, 5)
+    setTrendingResources(trending)
+  }, [favorites])
+
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? 'dark' : 'light',
+    },
+  })
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
+  }
 
   const toggleFavorite = (resourceId) => {
     setFavorites(prevFavorites => {
@@ -281,123 +319,183 @@ function App() {
 
   return (
     <div className="app-container">
-      <header className="header">
-        <h1>儿童学习导航</h1>
-        <div className="search-bar">
-          <input 
-            type="text" 
-            placeholder="搜索学习资源..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button onClick={() => setSearchQuery(searchQuery.trim())}>搜索</button>
-        </div>
-        <div className="language-toggle">
-          <button 
-            className={`lang-btn ${activeLang === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveLang('all')}
-          >
-            全部
-          </button>
-          <button 
-            className={`lang-btn ${activeLang === 'zh' ? 'active' : ''}`}
-            onClick={() => setActiveLang('zh')}
-          >
-            中文
-          </button>
-          <button 
-            className={`lang-btn ${activeLang === 'en' ? 'active' : ''}`}
-            onClick={() => setActiveLang('en')}
-          >
-            English
-          </button>
-        </div>
-      </header>
-
-      <nav className="categories">
-        {categories.map(category => (
-          <button
-            key={category.id}
-            className={`category-btn ${activeCategory === category.id ? 'active' : ''}`}
-            onClick={() => setActiveCategory(category.id)}
-          >
-            {category.name}
-          </button>
-        ))}
-      </nav>
-
-      <main className="resources-grid">
-        {resources
-          .filter(resource => 
-            (activeCategory === 'all' || resource.category === activeCategory) &&
-            (activeLang === 'all' || resource.lang === activeLang) &&
-            (searchQuery === '' || 
-              resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              resource.description.toLowerCase().includes(searchQuery.toLowerCase()))
-          )
-          .map(resource => (
-            <div key={resource.id} className="resource-card" onClick={() => handleCardClick(resource)}>
-              <div className="resource-image">
-                <img src={resource.image} alt={resource.title} />
-              </div>
+      <ThemeProvider theme={theme}>
+        <div className={`app-wrapper ${darkMode ? 'dark-mode' : ''}`}>
+          <header className="header">
+            <div className="header-top">
+              <h1>儿童学习导航</h1>
+              {/* <button className="theme-toggle" onClick={toggleDarkMode}>
+                {darkMode ? <FaSun /> : <FaMoon />}
+              </button> */}
+            </div>
+            <div className="search-bar">
+              <input 
+                type="text" 
+                placeholder="搜索学习资源..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button onClick={() => setSearchQuery(searchQuery.trim())}>搜索</button>
+            </div>
+            <div className="language-toggle">
               <button 
-                className={`favorite-btn ${favorites.includes(resource.id) ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  toggleFavorite(resource.id)
-                }}
+                className={`lang-btn ${activeLang === 'all' ? 'active' : ''}`}
+                onClick={() => setActiveLang('all')}
               >
-                ★
+                全部
               </button>
-              <h3>{resource.title}</h3>
-              <p>{resource.description}</p>
-              <div className="card-footer">
-                <div className="tag-group">
-                  <span className={`lang-tag ${resource.lang}`}>
-                    {resource.lang === 'zh' ? '中文' : 'English'}
-                  </span>
-                  {resource.ageRange && (
-                    <span className="age-tag">
-                      {resource.ageRange}岁
-                    </span>
-                  )}
-                  {resource.difficulty && (
-                    <span className="difficulty-tag">
-                      {resource.difficulty}
-                    </span>
-                  )}
+              <button 
+                className={`lang-btn ${activeLang === 'zh' ? 'active' : ''}`}
+                onClick={() => setActiveLang('zh')}
+              >
+                中文
+              </button>
+              <button 
+                className={`lang-btn ${activeLang === 'en' ? 'active' : ''}`}
+                onClick={() => setActiveLang('en')}
+              >
+                English
+              </button>
+            </div>
+
+            <div className="filter-section">
+              {/* <select 
+                value={activeDifficulty} 
+                onChange={(e) => setActiveDifficulty(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">所有难度</option>
+                <option value="初级">初级</option>
+                <option value="中级">中级</option>
+                <option value="高级">高级</option>
+              </select>
+
+              <select 
+                value={activeAgeRange} 
+                onChange={(e) => setActiveAgeRange(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">所有年龄</option>
+                <option value="0-6">0-6岁</option>
+                <option value="7-12">7-12岁</option>
+                <option value="13-18">13-18岁</option>
+              </select> */}
+            </div>
+          </header>
+
+          {trendingResources.length > 0 && (
+            <section className="trending-section">
+              <h2>热门推荐</h2>
+              <div className="trending-resources">
+                {trendingResources.map(resource => (
+                  <div key={resource.id} className="trending-card">
+                    <img src={resource.image} alt={resource.title} />
+                    <h4>{resource.title}</h4>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <nav className="categories">
+            {categories.map(category => (
+              <button
+                key={category.id}
+                className={`category-btn ${activeCategory === category.id ? 'active' : ''}`}
+                onClick={() => setActiveCategory(category.id)}
+              >
+                {category.name}
+              </button>
+            ))}
+          </nav>
+
+          <main className="resources-grid">
+            {resources
+              .filter(resource => 
+                (activeCategory === 'all' || resource.category === activeCategory) &&
+                (activeLang === 'all' || resource.lang === activeLang) &&
+                (activeDifficulty === 'all' || resource.difficulty.includes(activeDifficulty)) &&
+                (activeAgeRange === 'all' || isInAgeRange(resource.ageRange, activeAgeRange)) &&
+                (searchQuery === '' || 
+                  resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  resource.description.toLowerCase().includes(searchQuery.toLowerCase()))
+              )
+              .map(resource => (
+                <div key={resource.id} className="resource-card" onClick={() => handleCardClick(resource)}>
+                  <div className="resource-image">
+                    <img src={resource.image} alt={resource.title} />
+                  </div>
+                  <button 
+                    className={`favorite-btn ${favorites.includes(resource.id) ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleFavorite(resource.id)
+                    }}
+                  >
+                    ★
+                  </button>
+                  <div className="share-buttons">
+                    <FacebookShareButton url={resource.url} quote={resource.title}>
+                      <FaFacebook className="share-icon" />
+                    </FacebookShareButton>
+                    <TwitterShareButton url={resource.url} title={resource.title}>
+                      <FaTwitter className="share-icon" />
+                    </TwitterShareButton>
+                    <WhatsappShareButton url={resource.url} title={resource.title}>
+                      <FaWhatsapp className="share-icon" />
+                    </WhatsappShareButton>
+                  </div>
+                  <h3>{resource.title}</h3>
+                  <p>{resource.description}</p>
+                  <div className="card-footer">
+                    <div className="tag-group">
+                      <span className={`lang-tag ${resource.lang}`}>
+                        {resource.lang === 'zh' ? '中文' : 'English'}
+                      </span>
+                      {resource.ageRange && (
+                        <span className="age-tag">
+                          {resource.ageRange}岁
+                        </span>
+                      )}
+                      {resource.difficulty && (
+                        <span className="difficulty-tag">
+                          {resource.difficulty}
+                        </span>
+                      )}
+                    </div>
+                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="explore-btn">
+                      开始探索
+                    </a>
+                  </div>
                 </div>
-                <a href={resource.url} target="_blank" rel="noopener noreferrer" className="explore-btn">
+              ))}
+          </main>
+
+          {selectedResource && (
+            <div className="modal-overlay" onClick={closeModal}>
+              <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <button className="close-btn" onClick={closeModal}>×</button>
+                <div className="modal-image">
+                  <img src={selectedResource.image} alt={selectedResource.title} />
+                </div>
+                <h2>{selectedResource.title}</h2>
+                <p className="modal-description">{selectedResource.description}</p>
+                <div className="modal-info">
+                  <span className={`lang-tag ${selectedResource.lang}`}>
+                    {selectedResource.lang === 'zh' ? '中文' : 'English'}
+                  </span>
+                  <span className="category-tag">
+                    {categories.find(c => c.id === selectedResource.category)?.name}
+                  </span>
+                </div>
+                <a href={selectedResource.url} target="_blank" rel="noopener noreferrer" className="modal-btn">
                   开始探索
                 </a>
               </div>
             </div>
-          ))}
-      </main>
-
-      {selectedResource && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <button className="close-btn" onClick={closeModal}>×</button>
-            <div className="modal-image">
-              <img src={selectedResource.image} alt={selectedResource.title} />
-            </div>
-            <h2>{selectedResource.title}</h2>
-            <p className="modal-description">{selectedResource.description}</p>
-            <div className="modal-info">
-              <span className={`lang-tag ${selectedResource.lang}`}>
-                {selectedResource.lang === 'zh' ? '中文' : 'English'}
-              </span>
-              <span className="category-tag">
-                {categories.find(c => c.id === selectedResource.category)?.name}
-              </span>
-            </div>
-            <a href={selectedResource.url} target="_blank" rel="noopener noreferrer" className="modal-btn">
-              开始探索
-            </a>
-          </div>
+          )}
         </div>
-      )}
+      </ThemeProvider>
     </div>
   )
 }
