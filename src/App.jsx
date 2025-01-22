@@ -4,6 +4,48 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from 'react-share'
 import { FaFacebook, FaTwitter, FaWhatsapp, FaMoon, FaSun } from 'react-icons/fa'
 
+// 谷歌广告组件
+const GoogleAd = ({ adSlot, style }) => {
+  useEffect(() => {
+    try {
+      const pushAd = () => {
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (innerErr) {
+          console.error('Error pushing ad:', innerErr);
+        }
+      };
+
+      if (window.adsbygoogle) {
+        pushAd();
+      } else {
+        // 如果广告脚本还未加载，等待加载完成
+        const script = document.createElement('script');
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2149434191592924';
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        script.onload = pushAd;
+        document.head.appendChild(script);
+      }
+    } catch (err) {
+      console.error('Google AdSense error:', err);
+    }
+  }, [adSlot]); // 当广告单元ID变化时重新加载
+
+  return (
+    <ins
+      className="adsbygoogle"
+      style={style}
+      data-ad-client="ca-pub-2149434191592924"
+      data-ad-slot={adSlot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+      data-ad-layout="in-article"
+    />
+  );
+};
+
+
 const isInAgeRange = (resourceRange, selectedRange) => {
   if (selectedRange === 'all') return true
   
@@ -14,6 +56,19 @@ const isInAgeRange = (resourceRange, selectedRange) => {
 }
 
 function App() {
+  // 添加谷歌广告脚本
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2149434191592924';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeLang, setActiveLang] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -324,63 +379,16 @@ function App() {
           <header className="header">
             <div className="header-top">
               <h1>儿童学习导航</h1>
-              {/* <button className="theme-toggle" onClick={toggleDarkMode}>
-                {darkMode ? <FaSun /> : <FaMoon />}
-              </button> */}
             </div>
-            <div className="search-bar">
-              <input 
-                type="text" 
-                placeholder="搜索学习资源..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+            <div className="banner-ad">
+              <GoogleAd
+                adSlot="5740670043"
+                style={{ display: 'block', width: '728px', height: '90px' }}
               />
-              <button onClick={() => setSearchQuery(searchQuery.trim())}>搜索</button>
             </div>
-            <div className="language-toggle">
-              <button 
-                className={`lang-btn ${activeLang === 'all' ? 'active' : ''}`}
-                onClick={() => setActiveLang('all')}
-              >
-                全部
-              </button>
-              <button 
-                className={`lang-btn ${activeLang === 'zh' ? 'active' : ''}`}
-                onClick={() => setActiveLang('zh')}
-              >
-                中文
-              </button>
-              <button 
-                className={`lang-btn ${activeLang === 'en' ? 'active' : ''}`}
-                onClick={() => setActiveLang('en')}
-              >
-                English
-              </button>
-            </div>
-
-            <div className="filter-section">
-              {/* <select 
-                value={activeDifficulty} 
-                onChange={(e) => setActiveDifficulty(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">所有难度</option>
-                <option value="初级">初级</option>
-                <option value="中级">中级</option>
-                <option value="高级">高级</option>
-              </select>
-
-              <select 
-                value={activeAgeRange} 
-                onChange={(e) => setActiveAgeRange(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">所有年龄</option>
-                <option value="0-6">0-6岁</option>
-                <option value="7-12">7-12岁</option>
-                <option value="13-18">13-18岁</option>
-              </select> */}
-            </div>
+            {/* <button className="theme-toggle" onClick={toggleDarkMode}>
+              {darkMode ? <FaSun /> : <FaMoon />}
+            </button> */}
           </header>
 
           {trendingResources.length > 0 && (
@@ -420,56 +428,82 @@ function App() {
                   resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                   resource.description.toLowerCase().includes(searchQuery.toLowerCase()))
               )
-              .map(resource => (
-                <div key={resource.id} className="resource-card" onClick={() => handleCardClick(resource)}>
-                  <div className="resource-image">
-                    <img src={resource.image} alt={resource.title} />
-                  </div>
-                  <button 
-                    className={`favorite-btn ${favorites.includes(resource.id) ? 'active' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      toggleFavorite(resource.id)
-                    }}
-                  >
-                    ★
-                  </button>
-                  <div className="share-buttons">
-                    <FacebookShareButton url={resource.url} quote={resource.title}>
-                      <FaFacebook className="share-icon" />
-                    </FacebookShareButton>
-                    <TwitterShareButton url={resource.url} title={resource.title}>
-                      <FaTwitter className="share-icon" />
-                    </TwitterShareButton>
-                    <WhatsappShareButton url={resource.url} title={resource.title}>
-                      <FaWhatsapp className="share-icon" />
-                    </WhatsappShareButton>
-                  </div>
-                  <h3>{resource.title}</h3>
-                  <p>{resource.description}</p>
-                  <div className="card-footer">
-                    <div className="tag-group">
-                      <span className={`lang-tag ${resource.lang}`}>
-                        {resource.lang === 'zh' ? '中文' : 'English'}
-                      </span>
-                      {resource.ageRange && (
-                        <span className="age-tag">
-                          {resource.ageRange}岁
-                        </span>
-                      )}
-                      {resource.difficulty && (
-                        <span className="difficulty-tag">
-                          {resource.difficulty}
-                        </span>
-                      )}
+              .map((resource, index) => {
+                // 每4个资源后插入一个广告
+                const items = [];
+                items.push(
+                  <div key={resource.id} className="resource-card" onClick={() => handleCardClick(resource)}>
+                    {/* 原有的资源卡片内容 */}
+                    <div className="resource-image">
+                      <img src={resource.image} alt={resource.title} />
                     </div>
-                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="explore-btn">
-                      开始探索
-                    </a>
+                    <button 
+                      className={`favorite-btn ${favorites.includes(resource.id) ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleFavorite(resource.id)
+                      }}
+                    >
+                      ★
+                    </button>
+                    <div className="share-buttons">
+                      <FacebookShareButton url={resource.url} quote={resource.title}>
+                        <FaFacebook className="share-icon" />
+                      </FacebookShareButton>
+                      <TwitterShareButton url={resource.url} title={resource.title}>
+                        <FaTwitter className="share-icon" />
+                      </TwitterShareButton>
+                      <WhatsappShareButton url={resource.url} title={resource.title}>
+                        <FaWhatsapp className="share-icon" />
+                      </WhatsappShareButton>
+                    </div>
+                    <h3>{resource.title}</h3>
+                    <p>{resource.description}</p>
+                    <div className="card-footer">
+                      <div className="tag-group">
+                        <span className={`lang-tag ${resource.lang}`}>
+                          {resource.lang === 'zh' ? '中文' : 'English'}
+                        </span>
+                        {resource.ageRange && (
+                          <span className="age-tag">
+                            {resource.ageRange}岁
+                          </span>
+                        )}
+                        {resource.difficulty && (
+                          <span className="difficulty-tag">
+                            {resource.difficulty}
+                          </span>
+                        )}
+                      </div>
+                      <a href={resource.url} target="_blank" rel="noopener noreferrer" className="explore-btn">
+                        开始探索
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+
+                // 每4个资源后添加广告
+                if ((index + 1) % 4 === 0) {
+                  items.push(
+                    <div key={`ad-${index}`} className="ad-card">
+                      <GoogleAd
+                        adSlot={`574067004${index/4 + 3}`}
+                        style={{ display: 'block', width: '280px', height: '200px' }}
+                      />
+                    </div>
+                  );
+                }
+
+                return items;
+              })
+            }
           </main>
+          <aside className="sidebar-ad">
+            <GoogleAd
+              adSlot="5740670042"
+              style={{ display: 'block', width: '160px', height: '600px' }}
+            />
+          </aside>
 
           {selectedResource && (
             <div className="modal-overlay" onClick={closeModal}>
