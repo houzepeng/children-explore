@@ -395,19 +395,19 @@ function App() {
             </button> */}
           </header>
 
-          {trendingResources.length > 0 && (
+          {/* {trendingResources.length > 0 && (
             <section className="trending-section">
               <h2>热门推荐</h2>
               <div className="trending-resources">
                 {trendingResources.map(resource => (
-                  <div key={resource.id} className="trending-card">
+                  <div key={resource.id} className="trending-card" onClick={() => handleCardClick(resource)}>
                     <img src={resource.image} alt={resource.title} />
                     <h4>{resource.title}</h4>
                   </div>
                 ))}
               </div>
             </section>
-          )}
+          )} */}
 
           <nav className="categories">
             {categories.map(category => (
