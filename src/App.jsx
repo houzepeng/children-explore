@@ -383,6 +383,42 @@ function App() {
           <header className="header">
             <div className="header-top">
               <h1>儿童学习导航</h1>
+              <div className="search-bar">
+                <input
+                  type="text"
+                  placeholder="搜索教育资源..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="filters">
+                <div className="filter-group">
+                  <label>语言：</label>
+                  <select value={activeLang} onChange={(e) => setActiveLang(e.target.value)}>
+                    <option value="all">全部</option>
+                    <option value="zh">中文</option>
+                    <option value="en">英文</option>
+                  </select>
+                </div>
+                <div className="filter-group">
+                  <label>难度：</label>
+                  <select value={activeDifficulty} onChange={(e) => setActiveDifficulty(e.target.value)}>
+                    <option value="all">全部</option>
+                    <option value="初级">初级</option>
+                    <option value="中级">中级</option>
+                    <option value="高级">高级</option>
+                  </select>
+                </div>
+                <div className="filter-group">
+                  <label>年龄：</label>
+                  <select value={activeAgeRange} onChange={(e) => setActiveAgeRange(e.target.value)}>
+                    <option value="all">全部</option>
+                    <option value="2-6">2-6岁</option>
+                    <option value="7-12">7-12岁</option>
+                    <option value="13-18">13-18岁</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <div className="banner-ad">
               <GoogleAd
@@ -390,12 +426,12 @@ function App() {
                 style={{ display: 'block', width: '728px', height: '90px' }}
               />
             </div>
-            {/* <button className="theme-toggle" onClick={toggleDarkMode}>
+            <button className="theme-toggle" onClick={toggleDarkMode}>
               {darkMode ? <FaSun /> : <FaMoon />}
-            </button> */}
+            </button>
           </header>
 
-          {/* {trendingResources.length > 0 && (
+          {trendingResources.length > 0 && (
             <section className="trending-section">
               <h2>热门推荐</h2>
               <div className="trending-resources">
@@ -407,7 +443,7 @@ function App() {
                 ))}
               </div>
             </section>
-          )} */}
+          )}
 
           <nav className="categories">
             {categories.map(category => (
@@ -428,9 +464,14 @@ function App() {
                 (activeLang === 'all' || resource.lang === activeLang) &&
                 (activeDifficulty === 'all' || resource.difficulty.includes(activeDifficulty)) &&
                 (activeAgeRange === 'all' || isInAgeRange(resource.ageRange, activeAgeRange)) &&
-                (searchQuery === '' || 
-                  resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  resource.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                (searchQuery === '' || [
+                  resource.title,
+                  resource.description,
+                  categories.find(c => c.id === resource.category)?.name,
+                  resource.lang === 'zh' ? '中文' : 'English',
+                  resource.difficulty,
+                  resource.ageRange
+                ].some(field => field && field.toLowerCase().includes(searchQuery.toLowerCase())))
               )
               .map((resource, index) => {
                 // 每4个资源后插入一个广告
