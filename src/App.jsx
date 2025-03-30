@@ -3,6 +3,8 @@ import './App.css'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from 'react-share'
 import { FaFacebook, FaTwitter, FaWhatsapp, FaMoon, FaSun } from 'react-icons/fa'
+import LanguageSwitcher from './components/LanguageSwitcher'
+import { getTranslation, translations } from './i18n/translations'
 
 // 谷歌广告组件
 const GoogleAd = ({ adSlot, style }) => {
@@ -73,6 +75,12 @@ function App() {
     };
   }, []);
 
+  // 获取浏览器语言设置，默认为中文
+  const getBrowserLanguage = () => {
+    const lang = navigator.language || navigator.userLanguage;
+    return lang.startsWith('zh') ? 'zh' : 'en';
+  };
+
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeLang, setActiveLang] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -81,19 +89,8 @@ function App() {
   const [darkMode, setDarkMode] = useState(false)
   const [activeDifficulty, setActiveDifficulty] = useState('all')
   const [activeAgeRange, setActiveAgeRange] = useState('all')
-  const [trendingResources, setTrendingResources] = useState([])
+  const [currentLanguage, setCurrentLanguage] = useState(getBrowserLanguage())
 
-  useEffect(() => {
-    // 根据收藏数计算热门资源
-    const trending = resources
-      .map(resource => ({
-        ...resource,
-        popularity: favorites.includes(resource.id) ? 1 : 0
-      }))
-      .sort((a, b) => b.popularity - a.popularity)
-      .slice(0, 5)
-    setTrendingResources(trending)
-  }, [favorites])
 
   const theme = createTheme({
     palette: {
@@ -123,15 +120,21 @@ function App() {
     setSelectedResource(null)
   }
 
-  const categories = [
-    { id: 'all', name: '全部' },
-    { id: 'math', name: '数学' },
-    { id: 'chinese', name: '语文' },
-    { id: 'english', name: '英语' },
-    { id: 'science', name: '科学' },
-    { id: 'art', name: '艺术' },
-    { id: 'games', name: '益智游戏' }
+  // 获取翻译文本
+  const t = (key) => getTranslation(currentLanguage, key);
+
+  // 动态生成分类，支持国际化
+  const getCategories = () => [
+    { id: 'all', name: t('categories.all') },
+    { id: 'math', name: t('categories.math') },
+    { id: 'chinese', name: t('categories.chinese') },
+    { id: 'english', name: t('categories.english') },
+    { id: 'science', name: t('categories.science') },
+    { id: 'art', name: t('categories.art') },
+    { id: 'games', name: t('categories.games') }
   ]
+  
+  const categories = getCategories()
 
   const resources = [
     { 
@@ -373,8 +376,161 @@ function App() {
       ageRange: '4-15',
       difficulty: '初级到高级',
       isFavorite: false
+    },
+    {
+      id: 21,
+      title: 'Prodigy Math',
+      category: 'math',
+      url: 'https://www.prodigygame.com',
+      description: 'Math learning platform disguised as an exciting RPG adventure game',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/2970/2970844.png',
+      ageRange: '6-14',
+      difficulty: '初级到中级',
+      isFavorite: false
+    },
+    {
+      id: 22,
+      title: '数学思维训练',
+      category: 'math',
+      url: 'https://www.mathplayground.com',
+      description: '专注于培养儿童数学思维能力的互动平台，寓教于乐',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/3870/3870783.png',
+      ageRange: '5-12',
+      difficulty: '初级到中级',
+      isFavorite: false
+    },
+    {
+      id: 23,
+      title: 'BrainPOP',
+      category: 'science',
+      url: 'https://www.brainpop.com',
+      description: 'Animated educational site for kids covering science, social studies, math and more',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/2909/2909461.png',
+      ageRange: '6-14',
+      difficulty: '初级到中级',
+      isFavorite: false
+    },
+    {
+      id: 24,
+      title: '儿童科普乐园',
+      category: 'science',
+      url: 'https://phet.colorado.edu/zh_CN',
+      description: '互动式科学模拟实验平台，让孩子在虚拟环境中探索科学原理',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/1046/1046273.png',
+      ageRange: '8-16',
+      difficulty: '中级到高级',
+      isFavorite: false
+    },
+    {
+      id: 25,
+      title: '汉语拼音学习',
+      category: 'chinese',
+      url: 'https://www.qinxue365.com',
+      description: '专注于汉语拼音教学的平台，通过动画和游戏帮助儿童掌握拼音基础',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/3976/3976628.png',
+      ageRange: '4-8',
+      difficulty: '初级',
+      isFavorite: false
+    },
+    {
+      id: 26,
+      title: '成语故事',
+      category: 'chinese',
+      url: 'https://www.61baobao.com/chengyu',
+      description: '通过生动有趣的故事讲解中国成语，帮助孩子理解中华文化精髓',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/3976/3976631.png',
+      ageRange: '6-12',
+      difficulty: '中级',
+      isFavorite: false
+    },
+    {
+      id: 27,
+      title: 'Fun English',
+      category: 'english',
+      url: 'https://www.funenglishgames.com',
+      description: 'Interactive games and activities designed specifically for ESL learners',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/3898/3898085.png',
+      ageRange: '3-10',
+      difficulty: '初级',
+      isFavorite: false
+    },
+    {
+      id: 28,
+      title: 'Oxford Owl',
+      category: 'english',
+      url: 'https://www.oxfordowl.co.uk',
+      description: 'Free e-books and reading resources from Oxford University Press',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/3389/3389085.png',
+      ageRange: '3-11',
+      difficulty: '初级到中级',
+      isFavorite: false
+    },
+    {
+      id: 29,
+      title: 'Tinkercad',
+      category: 'art',
+      url: 'https://www.tinkercad.com',
+      description: 'Kid-friendly 3D design and modeling tool for creative projects',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/1048/1048955.png',
+      ageRange: '8-16',
+      difficulty: '中级',
+      isFavorite: false
+    },
+    {
+      id: 30,
+      title: '儿童创意手工',
+      category: 'art',
+      url: 'https://www.jigsawplanet.com',
+      description: '提供丰富的儿童手工制作教程，激发创造力和动手能力',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/2970/2970788.png',
+      ageRange: '4-12',
+      difficulty: '初级到中级',
+      isFavorite: false
+    },
+    {
+      id: 31,
+      title: 'Cool Math Games',
+      category: 'games',
+      url: 'https://www.coolmathgames.com',
+      description: 'Brain training games that make learning math and logic fun',
+      lang: 'en',
+      image: 'https://cdn-icons-png.flaticon.com/512/3612/3612572.png',
+      ageRange: '8-16',
+      difficulty: '初级到高级',
+      isFavorite: false
+    },
+    {
+      id: 32,
+      title: '花生壳编程',
+      category: 'games',
+      url: 'https://www.codemonkey.com',
+      description: '寓教于乐的编程游戏平台，让孩子在游戏中学习编程基础',
+      lang: 'zh',
+      image: 'https://cdn-icons-png.flaticon.com/512/2317/2317965.png',
+      ageRange: '7-14',
+      difficulty: '初级到中级',
+      isFavorite: false
     }
   ]
+
+  // 处理语言切换
+  const handleLanguageChange = (lang) => {
+    setCurrentLanguage(lang);
+    // 更新HTML lang属性
+    document.documentElement.lang = lang;
+    // 更新页面标题
+    document.title = lang === 'zh' ? '儿童学习导航' : 'Children\'s Learning Navigator';
+  };
 
   return (
     <div className="app-container">
@@ -382,40 +538,40 @@ function App() {
         <div className={`app-wrapper ${darkMode ? 'dark-mode' : ''}`}>
           <header className="header">
             <div className="header-top">
-              <h1>儿童学习导航</h1>
+              <h1>{t('title')}</h1>
               <div className="search-bar">
                 <input
                   type="text"
-                  placeholder="搜索教育资源..."
+                  placeholder={t('searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <div className="filters">
                 <div className="filter-group">
-                  <label>语言：</label>
+                  <label>{t('languageFilter')}</label>
                   <select value={activeLang} onChange={(e) => setActiveLang(e.target.value)}>
-                    <option value="all">全部</option>
-                    <option value="zh">中文</option>
-                    <option value="en">英文</option>
+                    <option value="all">{t('allOption')}</option>
+                    <option value="zh">{t('languages.zh')}</option>
+                    <option value="en">{t('languages.en')}</option>
                   </select>
                 </div>
                 <div className="filter-group">
-                  <label>难度：</label>
+                  <label>{t('difficultyFilter')}</label>
                   <select value={activeDifficulty} onChange={(e) => setActiveDifficulty(e.target.value)}>
-                    <option value="all">全部</option>
-                    <option value="初级">初级</option>
-                    <option value="中级">中级</option>
-                    <option value="高级">高级</option>
+                    <option value="all">{t('allOption')}</option>
+                    <option value="初级">{t('difficulty.beginner')}</option>
+                    <option value="中级">{t('difficulty.intermediate')}</option>
+                    <option value="高级">{t('difficulty.advanced')}</option>
                   </select>
                 </div>
                 <div className="filter-group">
-                  <label>年龄：</label>
+                  <label>{t('ageFilter')}</label>
                   <select value={activeAgeRange} onChange={(e) => setActiveAgeRange(e.target.value)}>
-                    <option value="all">全部</option>
-                    <option value="2-6">2-6岁</option>
-                    <option value="7-12">7-12岁</option>
-                    <option value="13-18">13-18岁</option>
+                    <option value="all">{t('allOption')}</option>
+                    <option value="2-6">{t('ageRanges.young')}</option>
+                    <option value="7-12">{t('ageRanges.middle')}</option>
+                    <option value="13-18">{t('ageRanges.teen')}</option>
                   </select>
                 </div>
               </div>
@@ -426,24 +582,16 @@ function App() {
                 style={{ display: 'block', width: '728px', height: '90px' }}
               />
             </div>
+            <LanguageSwitcher 
+              currentLanguage={currentLanguage} 
+              onLanguageChange={handleLanguageChange} 
+            />
             <button className="theme-toggle" onClick={toggleDarkMode}>
               {darkMode ? <FaSun /> : <FaMoon />}
             </button>
           </header>
 
-          {trendingResources.length > 0 && (
-            <section className="trending-section">
-              <h2>热门推荐</h2>
-              <div className="trending-resources">
-                {trendingResources.map(resource => (
-                  <div key={resource.id} className="trending-card" onClick={() => handleCardClick(resource)}>
-                    <img src={resource.image} alt={resource.title} />
-                    <h4>{resource.title}</h4>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+
 
           <nav className="categories">
             {categories.map(category => (
@@ -521,7 +669,7 @@ function App() {
                         )}
                       </div>
                       <a href={resource.url} target="_blank" rel="noopener noreferrer" className="explore-btn">
-                        开始探索
+                        {t('exploreButton')}
                       </a>
                     </div>
                   </div>
@@ -568,7 +716,7 @@ function App() {
                   </span>
                 </div>
                 <a href={selectedResource.url} target="_blank" rel="noopener noreferrer" className="modal-btn">
-                  开始探索
+                  {t('exploreButton')}
                 </a>
               </div>
             </div>
