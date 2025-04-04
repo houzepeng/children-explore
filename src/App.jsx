@@ -12,12 +12,8 @@ const GoogleAd = ({ adSlot, style }) => {
     try {
       const pushAd = () => {
         try {
-          // 确保在顶级域名下运行
-          if (!window.location.hostname.includes('.github.io')) {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-          } else {
-            console.warn('AdSense requires top-level domain to function properly');
-          }
+          // 无论在什么页面上都显示广告，包括没有发布商内容的页面
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
         } catch (innerErr) {
           console.error('Error pushing ad:', innerErr);
         }
